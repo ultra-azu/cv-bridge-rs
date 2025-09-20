@@ -2,6 +2,7 @@
 //! CvImage wraps the image array and its metadata and acts as
 //! a bridge between the `sensor_msgs::Image` message and `cv::Mat`
 
+use opencv::boxed_ref::BoxedRef;
 use opencv::prelude::*;
 use std::error::Error;
 
@@ -168,7 +169,7 @@ impl CvImage {
         let src_mat = self.as_cvmat()?;
         let mut dst_mat = Mat::default();
 
-        opencv::imgproc::cvt_color(&src_mat, &mut dst_mat, convertion_code, 0)?;
+        opencv::imgproc::cvt_color(&src_mat, &mut dst_mat, convertion_code, 0, opencv::core::AlgorithmHint::ALGO_HINT_DEFAULT)?;
 
         let cvtype = image_encodings::from_encstr_to_cvtype(desired_encoding)?;
         let scaling = image_encodings::get_scaling_factor(&self.encoding, desired_encoding);
@@ -187,7 +188,7 @@ impl CvImage {
     /// * `opencv::core::Mat` object
     pub fn as_cvmat(&mut self) -> Result<Mat, Box<dyn Error>> {
         let cvtype = image_encodings::from_encstr_to_cvtype(&self.encoding)?;
-        
+
         let buffer_mut_ptr = match self.data {
             DataContainer::VecU8(ref mut data) => data.as_mut_ptr() as *mut _,
             DataContainer::VecU16(ref mut data) => data.as_mut_ptr() as *mut _,
@@ -196,7 +197,7 @@ impl CvImage {
 
         let mat;
         unsafe {
-            mat = Mat::new_rows_cols_with_data(
+            mat = Mat::new_rows_cols_with_data_unsafe(
                 self.height as i32,
                 self.width as i32,
                 cvtype,
