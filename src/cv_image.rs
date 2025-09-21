@@ -2,13 +2,12 @@
 //! CvImage wraps the image array and its metadata and acts as
 //! a bridge between the `sensor_msgs::Image` message and `cv::Mat`
 
-use opencv::boxed_ref::BoxedRef;
 use opencv::prelude::*;
 use std::error::Error;
 
-use crate::msgs::{
-    std_msgs::Header,
-    sensor_msgs::Image,
+use r2r::{
+    std_msgs::msg::Header,
+    sensor_msgs::msg::Image,
 };
 use crate::utils::{
     image_encodings,
