@@ -43,7 +43,6 @@
 //! }
 //! ```
 
-pub mod msgs;
 pub mod cv_image;
 pub mod utils;
 
